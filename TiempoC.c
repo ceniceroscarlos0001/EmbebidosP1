@@ -7,7 +7,7 @@
 #define CHIPNAME "/dev/gpiochip0"
 #define NUM_GPIOS 8
 
-int gpios[NUM_GPIOS] = {4, 17, 27, 22, 5, 6, 13, 26};
+int gpios[NUM_GPIOS] = {27, 22, 10, 9, 11, 5, 6, 13};
 
 void calcular_valor() {
     struct gpiod_chip *chip;
