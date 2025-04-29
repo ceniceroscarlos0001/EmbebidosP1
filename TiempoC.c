@@ -1,13 +1,13 @@
-#include <gpiod.h>    // <-- Nueva librería
+#include <gpiod.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
-#define CHIPNAME "/dev/gpiochip0" // Normalmente es gpiochip0 en Raspberry Pi
+#define CHIPNAME "/dev/gpiochip0"
 #define NUM_GPIOS 8
 
-int gpios[NUM_GPIOS] = {4, 17, 27, 22, 5, 6, 13, 26}; // Tu arreglo de pines
+int gpios[NUM_GPIOS] = {4, 17, 27, 22, 5, 6, 13, 26};
 
 void calcular_valor() {
     struct gpiod_chip *chip;
@@ -21,7 +21,6 @@ void calcular_valor() {
         return;
     }
 
-    // Abrimos el chip
     chip = gpiod_chip_open(CHIPNAME);
     if (!chip) {
         perror("Error al abrir el chip GPIO");
@@ -30,7 +29,8 @@ void calcular_valor() {
         return;
     }
 
-    // Pedimos las líneas
+    gpiod_line_bulk_init(&bulk); // Inicializamos el bulk manualmente
+
     for (int i = 0; i < NUM_GPIOS; i++) {
         lines[i] = gpiod_chip_get_line(chip, gpios[i]);
         if (!lines[i]) {
@@ -40,13 +40,9 @@ void calcular_valor() {
             fclose(fp_tiempo);
             return;
         }
+        gpiod_line_bulk_add(&bulk, lines[i]); // <-- Usamos gpiod_line_bulk_add uno por uno
     }
 
-    // Agrupamos
-    gpiod_line_bulk_init(&bulk);
-    gpiod_line_bulk_add_array(&bulk, lines, NUM_GPIOS);
-
-    // Configuramos las líneas como entrada
     if (gpiod_line_request_bulk_input(&bulk, "leer_gpio") < 0) {
         perror("Error al configurar las líneas como entrada");
         gpiod_chip_close(chip);
@@ -55,7 +51,6 @@ void calcular_valor() {
         return;
     }
 
-    // Empezamos a leer
     for (int i = 0; i < 10000; i++) {
         struct timespec start, end;
         int valores[NUM_GPIOS];
@@ -63,12 +58,17 @@ void calcular_valor() {
 
         clock_gettime(CLOCK_MONOTONIC, &start);
 
-        if (gpiod_line_get_value_bulk(&bulk, valores) < 0) {
-            perror("Error al leer los valores");
-            break;
+        for (int j = 0; j < NUM_GPIOS; j++) {
+            valores[j] = gpiod_line_get_value(lines[j]);
+            if (valores[j] < 0) {
+                perror("Error al leer el valor del GPIO");
+                gpiod_chip_close(chip);
+                fclose(fp_numero);
+                fclose(fp_tiempo);
+                return;
+            }
         }
 
-        // Reconstruimos el número
         for (int j = 0; j < NUM_GPIOS; j++) {
             numero += valores[j] << j;
         }
