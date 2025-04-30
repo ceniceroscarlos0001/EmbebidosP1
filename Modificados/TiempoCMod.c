@@ -29,7 +29,7 @@ void calcular_valor() {
         return;
     }
 
-    gpiod_line_bulk_init(&bulk); // Inicializamos el bulk manualmente
+    gpiod_line_bulk_init(&bulk);
 
     for (int i = 0; i < NUM_GPIOS; i++) {
         lines[i] = gpiod_chip_get_line(chip, gpios[i]);
@@ -40,7 +40,7 @@ void calcular_valor() {
             fclose(fp_tiempo);
             return;
         }
-        gpiod_line_bulk_add(&bulk, lines[i]); // <-- Usamos gpiod_line_bulk_add uno por uno
+        gpiod_line_bulk_add(&bulk, lines[i]);
     }
 
     if (gpiod_line_request_bulk_input(&bulk, "leer_gpio") < 0) {
@@ -52,11 +52,14 @@ void calcular_valor() {
     }
 
     for (int i = 0; i < 10000; i++) {
-        struct timespec start, end;
+        struct timespec timestamp;
         int valores[NUM_GPIOS];
         int numero = 0;
 
-        clock_gettime(CLOCK_MONOTONIC, &start);
+        // Obtener el tiempo como en el script de shell (CLOCK_REALTIME)
+        clock_gettime(CLOCK_REALTIME, &timestamp);
+        long long marca_tiempo = (long long)timestamp.tv_sec * 1000000000LL + timestamp.tv_nsec;
+        fprintf(fp_tiempo, "%lld\n", marca_tiempo);
 
         for (int j = 0; j < NUM_GPIOS; j++) {
             valores[j] = gpiod_line_get_value(lines[j]);
@@ -74,10 +77,6 @@ void calcular_valor() {
         }
 
         fprintf(fp_numero, "%d\n", numero);
-
-        clock_gettime(CLOCK_MONOTONIC, &end);
-        long long tiempo = (end.tv_sec - start.tv_sec) * 1000000000LL + (end.tv_nsec - start.tv_nsec);
-        fprintf(fp_tiempo, "Tiempo total: %lld nanosegundos\n", tiempo);
     }
 
     gpiod_chip_close(chip);
