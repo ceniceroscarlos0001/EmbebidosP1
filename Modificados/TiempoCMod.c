@@ -13,7 +13,7 @@ void calcular_valor() {
     struct gpiod_chip *chip;
     struct gpiod_line_bulk bulk;
     struct gpiod_line *lines[NUM_GPIOS];
-    FILE *fp_numero = fopen("numeroC.txt", "a");
+    FILE *fp_numero = fopen("amplitudC.txt", "a");
     FILE *fp_tiempo = fopen("tiempoC.txt", "a");
 
     if (fp_numero == NULL || fp_tiempo == NULL) {
