@@ -5,7 +5,7 @@ import java.util.*;
 public class codigo {
 
     // GPIO utilizados para generar número
-    static int[] gpios = {4, 17, 27, 22, 5, 6, 13, 26};
+    static int[] gpios = {27, 22, 10, 9, 11, 5, 6, 13};
 
     public static void main(String[] args) {
         if (args.length != 1) {
@@ -60,6 +60,12 @@ public class codigo {
              BufferedWriter tiempoWriter = new BufferedWriter(new FileWriter("tiempoJava.txt", true))) {
 
             for (int i = 1; i <= 10000; i++) {
+                // Obtener el timestamp en formato como `date +%s%N`
+                long currentTimeNano = System.currentTimeMillis() * 1_000_000L +
+                                       (System.nanoTime() % 1_000_000L); // agregar parte submilisegundo
+
+                tiempoWriter.write(currentTimeNano + "\n");
+
                 int[] bits = new int[8];
                 for (int j = 0; j < 8; j++) {
                     String valuePath = "/sys/class/gpio/gpio" + gpios[j] + "/value";
@@ -74,10 +80,7 @@ public class codigo {
                 int numero = bits[0] + bits[1]*2 + bits[2]*4 + bits[3]*8 +
                              bits[4]*16 + bits[5]*32 + bits[6]*64 + bits[7]*128;
 
-                long start = System.nanoTime();
                 numeroWriter.write(numero + "\n");
-                long end = System.nanoTime();
-                tiempoWriter.write("Tiempo total: " + (end - start) + " nanosegundos\n");
             }
 
         } catch (IOException e) {
