@@ -7,7 +7,7 @@ public class TiempoJava {
     // GPIO utilizados para generar número
     static int[] gpios = {27, 22, 10, 9, 11, 5, 6, 13};
 
-    public static void main() {
+    public static void main(String[] args) {
         configurarGPIOs();   // Configura GPIOs
         leerValor();         // Lee valores y guarda en archivos
         cerrarGPIOs();       // Cierra GPIOs al final
