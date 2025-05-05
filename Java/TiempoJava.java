@@ -6,10 +6,11 @@ public class TiempoJava {
 
     // GPIO utilizados para generar número
     static int[] gpios = {27, 22, 10, 9, 11, 5, 6, 13};
-            configurarGPIOs();
-            cerrarGPIOs();
-            leerValor();
-        }
+
+    public static void main(String[] args) {
+        configurarGPIOs();   // Configura GPIOs
+        leerValor();         // Lee valores y guarda en archivos
+        cerrarGPIOs();       // Cierra GPIOs al final
     }
 
     private static void configurarGPIOs() {
@@ -41,9 +42,8 @@ public class TiempoJava {
              BufferedWriter tiempoWriter = new BufferedWriter(new FileWriter("tiempoJava.txt", true))) {
 
             for (int i = 1; i <= 10000; i++) {
-                // Obtener el timestamp en formato como `date +%s%N`
                 long currentTimeNano = System.currentTimeMillis() * 1_000_000L +
-                                       (System.nanoTime() % 1_000_000L); // agregar parte submilisegundo
+                                       (System.nanoTime() % 1_000_000L);
 
                 tiempoWriter.write(currentTimeNano + "\n");
 
