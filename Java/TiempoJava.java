@@ -2,32 +2,13 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-public class codigo {
+public class TiempoJava {
 
     // GPIO utilizados para generar número
     static int[] gpios = {27, 22, 10, 9, 11, 5, 6, 13};
-
-    public static void main(String[] args) {
-        if (args.length != 1) {
-            System.out.println("No hay comando");
-            System.out.println("Los comandos a utilizar son: config, valor, cerrar");
-            System.exit(2);
-        }
-
-        String comando = args[0];
-
-        switch (comando) {
-            case "config":
-                configurarGPIOs();
-                break;
-            case "cerrar":
-                cerrarGPIOs();
-                break;
-            case "valor":
-                leerValor();
-                break;
-            default:
-                System.out.println("Comando no válido. Usa: config, valor, cerrar");
+            configurarGPIOs();
+            cerrarGPIOs();
+            leerValor();
         }
     }
 
