@@ -38,7 +38,7 @@ public class TiempoJava {
     }
 
     private static void leerValor() {
-        try (BufferedWriter numeroWriter = new BufferedWriter(new FileWriter("numeroJava.txt", true));
+        try (BufferedWriter numeroWriter = new BufferedWriter(new FileWriter("amplitudJava.txt", true));
              BufferedWriter tiempoWriter = new BufferedWriter(new FileWriter("tiempoJava.txt", true))) {
 
             for (int i = 1; i <= 10000; i++) {
